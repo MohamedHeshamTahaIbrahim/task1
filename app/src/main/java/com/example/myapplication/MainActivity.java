@@ -233,7 +233,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         JsonObjectRequest myReq=new JsonObjectRequest(Method.GET,url+urlstring,null,  createMyReqSuccessListener(),
                 createMyReqErrorListener());
         queue.add(myReq);
-        ImageLoader imageLoader = MyVolley.getInstance(this.getApplicationContext()).getImageLoader();
+        ImageLoader imageLoader = MyVolley.getInstance(this).getImageLoader();
         imageLoader.get(imageurl+urimage,ImageLoader.getImageListener(mImageView,R.drawable.ic_launcher,R.drawable.ic_launcher));
 
     }
