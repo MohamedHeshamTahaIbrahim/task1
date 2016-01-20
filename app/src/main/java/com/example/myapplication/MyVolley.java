@@ -1,47 +1,57 @@
 package com.example.myapplication;
-import android.content.Context;
-import com.android.volley.RequestQueue;
-import com.android.volley.cache.BitmapImageCache;
-import com.android.volley.cache.SimpleImageLoader;
-import com.android.volley.toolbox.Volley;
+
 
 /**
  * Created by محمد on 17/01/2016.
  */
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.LruCache;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.cache.BitmapImageCache;
+import com.android.volley.cache.SimpleImageLoader;
+import com.android.volley.toolbox.ImageCache;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+
+
+
 public class MyVolley {
-    private static RequestQueue mRequestQueue;
-    private static SimpleImageLoader mImageLoader;
+    private static MyVolley mInstance;
+    private RequestQueue mRequestQueue;
+    private SimpleImageLoader mImageLoader;
+    private static Context mCtx;
 
-
-    private MyVolley() {
-        // no instances
-    }
-
-    public static void init(Context context) {
-        mRequestQueue = Volley.newRequestQueue(context);
+    private MyVolley(Context context) {
+        mCtx = context;
+        mRequestQueue = getRequestQueue();
         mImageLoader = new SimpleImageLoader(mRequestQueue, BitmapImageCache.getInstance(null));
     }
 
-    public static RequestQueue getRequestQueue() {
-        if (mRequestQueue != null) {
-            return mRequestQueue;
-        } else {
-            throw new IllegalStateException("RequestQueue not initialized");
+    public static synchronized MyVolley getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new MyVolley(context);
         }
+        return mInstance;
     }
 
-    /**
-     * Returns instance of ImageLoader initialized with {@see FakeImageCache} which effectively means
-     * that no memory caching is used. This is useful for images that you know that will be show
-     * only once.
-     *
-     * @return
-     */
-    public static SimpleImageLoader getImageLoader() {
-        if (mImageLoader != null) {
-            return mImageLoader;
-        } else {
-            throw new IllegalStateException("ImageLoader not initialized");
+    public RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
         }
+        return mRequestQueue;
     }
+
+    public <T> void addToRequestQueue(Request<T> req) {
+        getRequestQueue().add(req);
+    }
+
+    public SimpleImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+
 }

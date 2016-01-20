@@ -228,11 +228,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void querynews(String searchString){
         String urlstring="";
         String urimage="";
-        RequestQueue queue = MyVolley.getRequestQueue();
+        RequestQueue queue = MyVolley.getInstance(this.getApplicationContext()).
+                getRequestQueue();
         JsonObjectRequest myReq=new JsonObjectRequest(Method.GET,url+urlstring,null,  createMyReqSuccessListener(),
                 createMyReqErrorListener());
         queue.add(myReq);
-        ImageLoader imageLoader = MyVolley.getImageLoader();
+        ImageLoader imageLoader = MyVolley.getInstance(this.getApplicationContext()).getImageLoader();
         imageLoader.get(imageurl+urimage,ImageLoader.getImageListener(mImageView,R.drawable.ic_launcher,R.drawable.ic_launcher));
 
     }
